@@ -265,7 +265,7 @@ extern "C" __declspec(dllexport)
 void setInfo(NppData nppData)
 {
 	SLog(__FUNCTION__);
-	char modName[MAX_PATH] = {0};
+	TCHAR modName[MAX_PATH] = {0};
 	g_nppData=nppData;
 
     // get path of plugin configuration
@@ -299,7 +299,7 @@ void setInfo(NppData nppData)
 	}
 	IFV(!g_tbData.hClient);
 	g_tbData.uMask = DWS_DF_CONT_BOTTOM | DWS_ICONTAB;
-	::GetModuleFileNameA((HINSTANCE)g_hModule, modName, MAX_PATH);
+	::GetModuleFileName((HINSTANCE)g_hModule, modName, MAX_PATH);
 	g_tbData.pszModuleName = modName;
     g_tbData.dlgID = g_showWndInd;
 	g_tbData.pszName=g_plgName;
@@ -341,7 +341,7 @@ void beNotified(SCNotification *notifyCode)
 		if (notifyCode->nmhdr.code == NPPN_TBMODIFICATION) {
 			g_ToolBar.hToolbarBmp = (HBITMAP)::LoadImage((HINSTANCE)g_hModule, MAKEINTRESOURCE(IDB_TLB_IMG), IMAGE_BITMAP, 0, 0, LR_DEFAULTSIZE);
 			IFV(!g_ToolBar.hToolbarBmp);
-			::SendMessage(g_nppData._nppHandle, NPPM_ADDTOOLBARICON, (WPARAM)g_funcItem[g_showWndInd]._cmdID, (LPARAM)&g_ToolBar);
+			::SendMessage(g_nppData._nppHandle, NPPM_ADDTOOLBARICON_DEPRECATED, (WPARAM)g_funcItem[g_showWndInd]._cmdID, (LPARAM)&g_ToolBar);
 		}
 	}
 

@@ -414,7 +414,7 @@ void CStaticWnd::ProcessConsoleDBClick(UINT ptX, UINT ptY)
 	for (int i = 0 ; i < nbFile ; i++) {
 		fileNames[i] = new TCHAR[MAX_PATH];
 	}
-	if (!::SendMessage(g_nppData._nppHandle, NPPM_GETOPENFILENAMES, (WPARAM)fileNames, (LPARAM)nbFile)) {
+	if (!::SendMessage(g_nppData._nppHandle, NPPM_GETOPENFILENAMES_DEPRECATED, (WPARAM)fileNames, (LPARAM)nbFile)) {
 		goto ProcessConsoleDBClick_exit;
 	}
 ProcessConsoleDBClick_search:

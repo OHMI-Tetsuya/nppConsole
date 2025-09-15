@@ -24,7 +24,8 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 #include <std.hxx>
 #include <PluginInterface.h>
-#include <Docking.h>
+#include <DockingFeature\Docking.h>
+#include <DockingFeature\dockingResource.h>
 
 class CStaticWnd
 {
