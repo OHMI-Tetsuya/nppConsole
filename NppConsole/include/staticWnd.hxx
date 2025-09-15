@@ -60,6 +60,7 @@ class CStaticWnd
 	
 	inline BOOL CreateConsoleProcess(LPCTSTR cmd);
 	inline bool Restart(LPCTSTR cmd);
+	inline void TerminateConsoleProcess();
 public:
 	enum
 	{

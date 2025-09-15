@@ -54,10 +54,7 @@ CStaticWnd::CStaticWnd()
 
 CStaticWnd::~CStaticWnd()
 {
-	if (m_pi.hProcess) {
-		SLog("TerminateProcess");
-		TerminateProcess(m_pi.hProcess, 0);
-	}
+	TerminateConsoleProcess();
 	FreeConsole();
 	if(s_oldHookMouse) UnhookWindowsHookEx(s_oldHookMouse);
 	if(s_oldHookKeyBoard) UnhookWindowsHookEx(s_oldHookKeyBoard);
@@ -213,12 +210,9 @@ BOOL CStaticWnd::CreateConsoleProcess(LPCTSTR cmd)
 			goto CreateConsoleProcess_err;
 		}
 	}
-	if (m_pi.hProcess) {
-		SLog(__FUNCTION__<<" TerminateProcess");
-		TerminateProcess(m_pi.hProcess, 0);
-		memset(&m_pi, 0, sizeof(PROCESS_INFORMATION));
-	}
-	
+
+	TerminateConsoleProcess();
+
 	si.cb = sizeof(si);
 	si.dwXCountChars=500;
 	si.dwYCountChars=300;
@@ -502,3 +496,16 @@ void CStaticWnd::SetCtrlCAction(int action)
 		SLog("m_ctrlCAction changed to : "<<m_ctrlCAction);
 	}
 }
+
+inline void CStaticWnd::TerminateConsoleProcess()
+{
+	if (m_pi.hProcess) {
+		SLog("TerminateProcess");
+		::TerminateProcess(m_pi.hProcess, 0);
+		::WaitForSingleObject(m_pi.hProcess, INFINITE);
+		::CloseHandle(m_pi.hProcess);
+		::CloseHandle(m_pi.hThread);
+		memset(&m_pi, 0, sizeof(PROCESS_INFORMATION));
+	}
+}
+
