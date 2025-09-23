@@ -54,10 +54,9 @@ CStaticWnd::CStaticWnd()
 
 CStaticWnd::~CStaticWnd()
 {
-	TerminateConsoleProcess();
-	FreeConsole();
-	if(s_oldHookMouse) UnhookWindowsHookEx(s_oldHookMouse);
-	if(s_oldHookKeyBoard) UnhookWindowsHookEx(s_oldHookKeyBoard);
+	// Never wait until the destructor - that's way too late.
+	// Doing it there can cause a BSOD and force a system reset.
+	// Do it right when we get the shutdown message.
 }
 
 LRESULT CALLBACK CStaticWnd::WinProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
@@ -502,10 +501,20 @@ inline void CStaticWnd::TerminateConsoleProcess()
 	if (m_pi.hProcess) {
 		SLog("TerminateProcess");
 		::TerminateProcess(m_pi.hProcess, 0);
-		::WaitForSingleObject(m_pi.hProcess, INFINITE);
+		DWORD retVal = ::WaitForSingleObject(m_pi.hProcess, 3000);	// INFINITE? It might freeze solid. We bail after 3000ms. Can't be helped.
+		if (WAIT_OBJECT_0 != retVal) {
+			SLog("\nWaitForSingleObject returnCode : "<<retVal<<"\n");
+		}
 		::CloseHandle(m_pi.hProcess);
 		::CloseHandle(m_pi.hThread);
 		memset(&m_pi, 0, sizeof(PROCESS_INFORMATION));
 	}
 }
 
+void CStaticWnd::TerminatePlugin()
+{
+	TerminateConsoleProcess();
+	::FreeConsole();
+	if (s_oldHookMouse) UnhookWindowsHookEx(s_oldHookMouse);
+	if (s_oldHookKeyBoard) UnhookWindowsHookEx(s_oldHookKeyBoard);
+}

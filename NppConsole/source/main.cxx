@@ -343,6 +343,12 @@ void beNotified(SCNotification *notifyCode)
 			IFV(!g_ToolBar.hToolbarBmp);
 			::SendMessage(g_nppData._nppHandle, NPPM_ADDTOOLBARICON_DEPRECATED, (WPARAM)g_funcItem[g_showWndInd]._cmdID, (LPARAM)&g_ToolBar);
 		}
+		// Never wait until the destructor - that's way too late.
+		// Doing it there can cause a BSOD and force a system reset.
+		// Shut down the plugin right at this point.
+		else if(NPPN_SHUTDOWN == notifyCode->nmhdr.code) {
+			g_staticWnd.TerminatePlugin();
+		}
 	}
 
 }

@@ -79,6 +79,7 @@ public:
 	void ProcessConsoleDBClick(UINT ptX, UINT ptY);
 	void ProcessConsoleCtrlC();
 	void SetCtrlCAction(int action);
+	void TerminatePlugin();
 };
 
 #endif //_STATICStaticWnd_HXX_
