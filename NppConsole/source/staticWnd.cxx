@@ -54,7 +54,7 @@ CStaticWnd::CStaticWnd()
 
 CStaticWnd::~CStaticWnd()
 {
-	// Never wait until the destructor Å\ that's way too late.
+	// Never wait until the destructor - that's way too late.
 	// Doing it there can cause a BSOD and force a system reset.
 	// Do it right when we get the shutdown message.
 }
