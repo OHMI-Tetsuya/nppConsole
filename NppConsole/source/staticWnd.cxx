@@ -54,13 +54,9 @@ CStaticWnd::CStaticWnd()
 
 CStaticWnd::~CStaticWnd()
 {
-	if (m_pi.hProcess) {
-		SLog("TerminateProcess");
-		TerminateProcess(m_pi.hProcess, 0);
-	}
-	FreeConsole();
-	if(s_oldHookMouse) UnhookWindowsHookEx(s_oldHookMouse);
-	if(s_oldHookKeyBoard) UnhookWindowsHookEx(s_oldHookKeyBoard);
+	// Never wait until the destructor - that's way too late.
+	// Doing it there can cause a BSOD and force a system reset.
+	// Do it right when we get the shutdown message.
 }
 
 LRESULT CALLBACK CStaticWnd::WinProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
@@ -213,12 +209,9 @@ BOOL CStaticWnd::CreateConsoleProcess(LPCTSTR cmd)
 			goto CreateConsoleProcess_err;
 		}
 	}
-	if (m_pi.hProcess) {
-		SLog(__FUNCTION__<<" TerminateProcess");
-		TerminateProcess(m_pi.hProcess, 0);
-		memset(&m_pi, 0, sizeof(PROCESS_INFORMATION));
-	}
-	
+
+	TerminateConsoleProcess();
+
 	si.cb = sizeof(si);
 	si.dwXCountChars=500;
 	si.dwYCountChars=300;
@@ -414,7 +407,7 @@ void CStaticWnd::ProcessConsoleDBClick(UINT ptX, UINT ptY)
 	for (int i = 0 ; i < nbFile ; i++) {
 		fileNames[i] = new TCHAR[MAX_PATH];
 	}
-	if (!::SendMessage(g_nppData._nppHandle, NPPM_GETOPENFILENAMES, (WPARAM)fileNames, (LPARAM)nbFile)) {
+	if (!::SendMessage(g_nppData._nppHandle, NPPM_GETOPENFILENAMES_DEPRECATED, (WPARAM)fileNames, (LPARAM)nbFile)) {
 		goto ProcessConsoleDBClick_exit;
 	}
 ProcessConsoleDBClick_search:
@@ -501,4 +494,27 @@ void CStaticWnd::SetCtrlCAction(int action)
 		m_ctrlCAction = action;
 		SLog("m_ctrlCAction changed to : "<<m_ctrlCAction);
 	}
+}
+
+inline void CStaticWnd::TerminateConsoleProcess()
+{
+	if (m_pi.hProcess) {
+		SLog("TerminateProcess");
+		::TerminateProcess(m_pi.hProcess, 0);
+		DWORD retVal = ::WaitForSingleObject(m_pi.hProcess, 3000);	// INFINITE? It might freeze solid. We bail after 3000ms. Can't be helped.
+		if (WAIT_OBJECT_0 != retVal) {
+			SLog("\nWaitForSingleObject returnCode : "<<retVal<<"\n");
+		}
+		::CloseHandle(m_pi.hProcess);
+		::CloseHandle(m_pi.hThread);
+		memset(&m_pi, 0, sizeof(PROCESS_INFORMATION));
+	}
+}
+
+void CStaticWnd::TerminatePlugin()
+{
+	TerminateConsoleProcess();
+	::FreeConsole();
+	if (s_oldHookMouse) UnhookWindowsHookEx(s_oldHookMouse);
+	if (s_oldHookKeyBoard) UnhookWindowsHookEx(s_oldHookKeyBoard);
 }

@@ -24,7 +24,8 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 #include <std.hxx>
 #include <PluginInterface.h>
-#include <Docking.h>
+#include <DockingFeature\Docking.h>
+#include <DockingFeature\dockingResource.h>
 
 class CStaticWnd
 {
@@ -59,6 +60,7 @@ class CStaticWnd
 	
 	inline BOOL CreateConsoleProcess(LPCTSTR cmd);
 	inline bool Restart(LPCTSTR cmd);
+	inline void TerminateConsoleProcess();
 public:
 	enum
 	{
@@ -77,6 +79,7 @@ public:
 	void ProcessConsoleDBClick(UINT ptX, UINT ptY);
 	void ProcessConsoleCtrlC();
 	void SetCtrlCAction(int action);
+	void TerminatePlugin();
 };
 
 #endif //_STATICStaticWnd_HXX_
