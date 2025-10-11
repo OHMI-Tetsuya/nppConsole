@@ -298,7 +298,7 @@ void setInfo(NppData nppData)
 		}
 	}
 	IFV(!g_tbData.hClient);
-	g_tbData.uMask = DWS_DF_CONT_BOTTOM | DWS_ICONTAB;
+	g_tbData.uMask = DWS_DF_CONT_BOTTOM | DWS_ICONTAB | DWS_USEOWNDARKMODE;
 	::GetModuleFileName((HINSTANCE)g_hModule, modName, MAX_PATH);
 	g_tbData.pszModuleName = modName;
     g_tbData.dlgID = g_showWndInd;
