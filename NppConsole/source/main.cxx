@@ -131,6 +131,12 @@ INT_PTR CALLBACK DialogProc(HWND hwndDlg, UINT uMsg,
             version += VER_STRING;
             version += "</a>";
             SetDlgItemTextA(hwndDlg, IDC_STC_VER, version.c_str());
+
+            // Add support for dark mode in the dialog.
+            ::SendMessage(g_nppData._nppHandle,
+                          NPPM_DARKMODESUBCLASSANDTHEME,
+                          static_cast<WPARAM>(NppDarkMode::dmfInit),
+                          reinterpret_cast<LPARAM>(hwndDlg));
 		}
 			return TRUE;
 
